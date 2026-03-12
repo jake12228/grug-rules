@@ -1,155 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Grug Nation Rules</title>
-<style>
-body {
-  margin: 0;
-  font-family: 'Arial', sans-serif;
-  overflow: hidden;
-  background: black; /* Dark background */
-  color: #fff;
-}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grug Nation Rules</title>
+  <style>
+    /* Background */
+    body {
+      margin: 0;
+      font-family: 'Arial', sans-serif;
+      background: #1a0a3a; /* Dark purple background */
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
 
-canvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 0;
-}
+    /* Main container */
+    .rules-container {
+      position: relative;
+      max-width: 700px;
+      background: rgba(50, 0, 80, 0.9);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 0 40px rgba(128, 0, 255, 0.6);
+      overflow: hidden;
+    }
 
-/* Rule clouds */
-.rule {
-  position: absolute;
-  font-size: 1.5rem;
-  font-weight: bold;
-  padding: 20px 35px;
-  background: rgba(0, 102, 255, 0.7); /* Blue cloud color */
-  border-radius: 50px;
-  box-shadow: 0 0 15px #00f, 0 0 30px #00f8ff;
-  color: #fff;
-  text-shadow: 0 0 10px #00f, 0 0 20px #00f8ff;
-  transition: box-shadow 0.3s;
-  cursor: pointer;
-  white-space: nowrap;
-}
+    /* Bubble effect */
+    .bubble {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(128, 0, 255, 0.3);
+      animation: float 15s infinite linear;
+    }
 
-.rule:hover {
-  box-shadow: 0 0 30px #00f, 0 0 40px #00f8ff;
-}
-</style>
+    @keyframes float {
+      0% { transform: translateY(100vh) scale(0.5); }
+      100% { transform: translateY(-200px) scale(1); }
+    }
+
+    /* Individual bubble sizes and positions */
+    .bubble:nth-child(1) { width: 80px; height: 80px; left: 10%; animation-duration: 18s; }
+    .bubble:nth-child(2) { width: 50px; height: 50px; left: 70%; animation-duration: 12s; }
+    .bubble:nth-child(3) { width: 120px; height: 120px; left: 40%; animation-duration: 20s; }
+    .bubble:nth-child(4) { width: 60px; height: 60px; left: 80%; animation-duration: 14s; }
+    .bubble:nth-child(5) { width: 90px; height: 90px; left: 25%; animation-duration: 16s; }
+
+    /* Rules list */
+    h1 {
+      text-align: center;
+      color: #ffccff;
+      text-shadow: 2px 2px 6px #8000ff;
+      margin-bottom: 20px;
+    }
+
+    ol {
+      font-size: 1.2rem;
+      line-height: 2;
+      padding-left: 20px;
+    }
+
+    ol li {
+      margin-bottom: 15px;
+    }
+  </style>
 </head>
 <body>
 
-<canvas id="canvas"></canvas>
+  <div class="rules-container">
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
 
-<div id="rulesContainer"></div>
-
-<script>
-// Canvas setup
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-// Floating bubbles
-let bubbles = [];
-for(let i=0;i<50;i++){
-  bubbles.push({
-    x: Math.random()*canvas.width,
-    y: Math.random()*canvas.height,
-    radius: Math.random()*20+10,
-    speed: Math.random()*0.5+0.5
-  });
-}
-
-// Animate bubbles
-function animateBubbles(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  bubbles.forEach(b=>{
-    ctx.beginPath();
-    ctx.arc(b.x, b.y, b.radius,0,Math.PI*2);
-    ctx.fillStyle='rgba(0,0,255,0.2)'; // Soft blue bubbles
-    ctx.fill();
-    b.y -= b.speed;
-    if(b.y + b.radius < 0) b.y = canvas.height + b.radius;
-  });
-  requestAnimationFrame(animateBubbles);
-}
-animateBubbles();
-
-// Click to spawn bubble
-canvas.addEventListener('click', e=>{
-  bubbles.push({
-    x:e.clientX,
-    y:e.clientY,
-    radius:Math.random()*20+10,
-    speed: Math.random()*1+0.5
-  });
-});
-
-// Rules text
-const rules = [
-  "1. Be respectful to all members.",
-  "2. No spamming or self-promotion.",
-  "3. Use channels for their intended purpose.",
-  "4. No harassment, hate speech, or NSFW content.",
-  "5. Listen to staff and follow Discord TOS.",
-  "6. Have fun and enjoy the community!",
-  "7. No sharing personal information of others.",
-  "8. Keep memes and jokes appropriate for all members.",
-  "9. No advertising other servers without permission.",
-  "10. Use the correct voice/text channels.",
-  "11. Don’t intentionally disrupt events or games.",
-  "12. Report rule-breaking to staff respectfully.",
-  "13. No excessive pinging or tagging members unnecessarily.",
-  "14. Respect ongoing discussions — don’t derail topics.",
-  "15. Participate in events and games positively; teamwork is encouraged."
-];
-
-const rulesContainer = document.getElementById('rulesContainer');
-const floatingRules = [];
-
-// Spread rules more organized (in 3 columns)
-const columnCount = 3;
-const columnWidth = window.innerWidth / columnCount;
-
-rules.forEach((text, i)=>{
-  const el = document.createElement('div');
-  el.classList.add('rule');
-  el.textContent = text;
-
-  // Initial organized position
-  let col = i % columnCount;
-  let row = Math.floor(i / columnCount);
-  el.style.left = (col * columnWidth + Math.random() * (columnWidth-250)) + 'px';
-  el.style.top = (50 + row*100 + Math.random()*30) + 'px';
-
-  rulesContainer.appendChild(el);
-  floatingRules.push({
-    el: el,
-    vx: (Math.random()*2-1)*0.3, // slower for smooth floating
-    vy: (Math.random()*2-1)*0.3
-  });
-});
-
-// Animate floating rules
-function animateRules(){
-  floatingRules.forEach(r=>{
-    let rect = r.el.getBoundingClientRect();
-    let x = rect.left + r.vx;
-    let y = rect.top + r.vy;
-    if(x < 0 || x+rect.width>window.innerWidth) r.vx*=-1;
-    if(y < 0 || y+rect.height>window.innerHeight) r.vy*=-1;
-    r.el.style.left = rect.left + r.vx + 'px';
-    r.el.style.top = rect.top + r.vy + 'px';
-  });
-  requestAnimationFrame(animateRules);
-}
-animateRules();
-</script>
+    <h1>Grug Nation Rules</h1>
+    <ol>
+      <li>Be respectful to all members.</li>
+      <li>No spamming, self-promotion, or advertising.</li>
+      <li>Use channels for their intended purpose.</li>
+      <li>No harassment, hate speech, or NSFW content.</li>
+      <li>Listen to staff and follow Discord TOS.</li>
+      <li>Have fun and enjoy the community!</li>
+    </ol>
+  </div>
 
 </body>
 </html>
